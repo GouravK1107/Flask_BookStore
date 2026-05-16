@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block title %}Payment Successful - BookStore{% endblock %}
+{% block extra_css %}
+<style>
+    body {
+        background-image: url('https://images.unsplash.com/photo-1519682337058-a94d519337bc?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+    }
+    .success-container {
+        background: rgba(255, 255, 245, 0.96);
+    }
+    .success-container {
+        max-width: 500px;
+        margin: 80px auto;
+        background: white;
+        border-radius: 20px;
+        padding: 45px;
+        text-align: center;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    .success-icon {
+        width: 80px;
+        height: 80px;
+        background: #27ae60;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 25px;
+    }
+    .success-icon span {
+        font-size: 3rem;
+        color: white;
+    }
+    .success-container h2 {
+        font-size: 1.8rem;
+        margin-bottom: 10px;
+    }
+    .success-container p {
+        color: #666;
+        margin-bottom: 25px;
+    }
+    .order-details {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 12px;
+        margin: 20px 0;
+    }
+    .btn-read {
+        background: #e67e22;
+        color: white;
+        padding: 12px 30px;
+        border-radius: 30px;
+        text-decoration: none;
+        display: inline-block;
+        font-weight: 600;
+        margin: 10px 5px;
+        transition: 0.2s;
+    }
+    .btn-read:hover {
+        background: #d35400;
+        transform: translateY(-2px);
+    }
+    .btn-back {
+        background: transparent;
+        color: #666;
+        padding: 10px 25px;
+        border-radius: 30px;
+        text-decoration: none;
+        display: inline-block;
+        border: 1px solid #ddd;
+        margin: 10px 5px;
+    }
+    .btn-back:hover {
+        background: #f0f0f0;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="success-container">
+    <div class="success-icon">
+        <span>✓</span>
+    </div>
+    <h2>Payment Successful!</h2>
+    <p>Thank you for your purchase</p>
+    
+    <div class="order-details">
+        <strong>{{ book.title }}</strong><br>
+        <span style="color: #e67e22;">₹{{ "%.0f"|format(book.price) }}</span>
+        <br>
+        <small>Order placed successfully</small>
+    </div>
+    
+    <a href="{{ url_for('read_book', book_id=book.id) }}" class="btn-read">📖 Read Book Now</a>
+    <br>
+    <a href="{{ url_for('book_detail', book_id=book.id) }}" class="btn-back">← Back to Book Details</a>
+</div>
+{% endblock %}

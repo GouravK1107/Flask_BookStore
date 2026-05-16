@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% block title %}Publish New Book - BookStore{% endblock %}
+{% block extra_css %}
+<style>
+    body {
+        background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)),
+                          url('https://images.unsplash.com/photo-1455390582262-044cdead277a?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+    }
+    .form-container {
+        background: rgba(255, 255, 245, 0.95);
+    }
+    .form-container {
+        max-width: 800px;
+        margin: 40px auto;
+        background: white;
+        padding: 35px;
+        border-radius: 20px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .form-container h2 {
+        margin-bottom: 10px;
+    }
+    .form-subtitle {
+        color: #666;
+        margin-bottom: 30px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #eee;
+    }
+    .form-group {
+        margin-bottom: 22px;
+    }
+    .form-group label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #333;
+    }
+    .form-group input, .form-group textarea, .form-group select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 0.95rem;
+        transition: 0.2s;
+    }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+        outline: none;
+        border-color: #e67e22;
+        box-shadow: 0 0 0 3px rgba(230,126,34,0.1);
+    }
+    .form-group input[type="file"] {
+        padding: 10px;
+        border: 2px dashed #e0e0e0;
+        background: #fafafa;
+        cursor: pointer;
+    }
+    .form-group input[type="file"]:hover {
+        border-color: #e67e22;
+        background: #fef5ea;
+    }
+    .btn-submit {
+        background: #e67e22;
+        color: white;
+        border: none;
+        padding: 14px 30px;
+        border-radius: 30px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+        width: 100%;
+    }
+    .btn-submit:hover {
+        background: #d35400;
+        transform: translateY(-1px);
+    }
+    .file-info {
+        font-size: 0.75rem;
+        color: #888;
+        margin-top: 6px;
+    }
+    .required {
+        color: #e74c3c;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="form-container">
+    <h2>📖 Publish New Book</h2>
+    <div class="form-subtitle">Share your story with the world</div>
+    
+    <form method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+            <label>Book Title <span class="required">*</span></label>
+            <input type="text" name="title" required placeholder="Enter your book title">
+        </div>
+        
+        <div class="form-group">
+            <label>Category <span class="required">*</span></label>
+            <select name="category" required>
+                <option value="Fiction">📖 Fiction</option>
+                <option value="Non-Fiction">📚 Non-Fiction</option>
+                <option value="Self-Help">🌟 Self-Help</option>
+                <option value="Technology">💻 Technology</option>
+                <option value="Science">🔬 Science</option>
+                <option value="Business">📊 Business</option>
+                <option value="Other">📌 Other</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label>Summary / Description <span class="required">*</span></label>
+            <textarea name="summary" rows="4" required placeholder="Write a compelling summary of your book..."></textarea>
+        </div>
+        
+        <div class="form-group">
+            <label>PDF File <span class="required">*</span></label>
+            <input type="file" name="pdf_file" accept=".pdf" required>
+            <div class="file-info">📄 Upload your book as PDF (Max 50MB)</div>
+        </div>
+        
+        <div class="form-group">
+            <label>Price (₹)</label>
+            <input type="number" name="price" step="0.01" value="0" placeholder="0 for free, e.g., 299">
+            <div class="file-info">💰 Set to 0 to offer this book for free</div>
+        </div>
+        
+        <div class="form-group">
+            <label>Cover Image URL</label>
+            <input type="text" name="cover_image" placeholder="https://example.com/cover.jpg">
+            <div class="file-info">🎨 Leave empty for default cover</div>
+        </div>
+        
+        <button type="submit" class="btn-submit">🚀 Publish Book</button>
+    </form>
+</div>
+{% endblock %}

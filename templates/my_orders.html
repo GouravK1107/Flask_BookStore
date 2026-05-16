@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% block title %}My Orders - BookStore{% endblock %}
+{% block extra_css %}
+<style>
+    .orders-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    .orders-header h1 {
+        font-size: 2rem;
+        color: #1a1a1a;
+    }
+    .order-card {
+        background: white;
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        transition: 0.2s;
+    }
+    .order-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+    .order-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #edf2f7;
+        margin-bottom: 15px;
+    }
+    .order-number {
+        font-weight: 700;
+        color: #e67e22;
+    }
+    .order-date {
+        color: #718096;
+        font-size: 0.85rem;
+    }
+    .order-status {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+    .status-confirmed { background: #d4edda; color: #155724; }
+    .status-pending { background: #fff3cd; color: #856404; }
+    .status-shipped { background: #cce5ff; color: #004085; }
+    .status-delivered { background: #27ae60; color: white; }
+    .status-cancelled { background: #f8d7da; color: #721c24; }
+    .order-items {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-bottom: 15px;
+    }
+    .order-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .order-item img {
+        width: 50px;
+        height: 65px;
+        object-fit: cover;
+        border-radius: 6px;
+    }
+    .order-total {
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: #e67e22;
+    }
+    .btn-view {
+        background: #e67e22;
+        color: white;
+        padding: 8px 20px;
+        border-radius: 25px;
+        text-decoration: none;
+        font-size: 0.85rem;
+    }
+    .empty-orders {
+        text-align: center;
+        padding: 60px;
+        background: white;
+        border-radius: 20px;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="orders-header">
+    <h1>📦 My Orders</h1>
+    <p>Track and manage your orders</p>
+</div>
+
+{% if orders %}
+    {% for order in orders %}
+    <div class="order-card">
+        <div class="order-header">
+            <div>
+                <span class="order-number">{{ order.order_number }}</span>
+                <div class="order-date">{{ order.ordered_at.strftime('%B %d, %Y') }}</div>
+            </div>
+            <div>
+                <span class="order-status status-{{ order.status }}">{{ order.status|upper }}</span>
+            </div>
+        </div>
+        
+        <div class="order-items">
+            {% for item in order.items[:3] %}
+            <div class="order-item">
+                <img src="{{ item.book.cover_image }}" alt="{{ item.book.title }}">
+                <div>
+                    <strong>{{ item.book.title }}</strong>
+                    <div>Qty: {{ item.quantity }}</div>
+                </div>
+            </div>
+            {% endfor %}
+            {% if order.items|length > 3 %}
+                <div class="order-item">+{{ order.items|length - 3 }} more items</div>
+            {% endif %}
+        </div>
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+            <div class="order-total">Total: ₹{{ "%.0f"|format(order.total_amount) }}</div>
+            <a href="{{ url_for('order_detail', order_id=order.id) }}" class="btn-view">View Details →</a>
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+    <div class="empty-orders">
+        <div style="font-size: 4rem; margin-bottom: 20px;">📦</div>
+        <h3>No orders yet</h3>
+        <p>You haven't placed any orders. Start shopping!</p>
+        <a href="{{ url_for('books') }}" class="btn-view" style="display: inline-block; margin-top: 20px;">Browse Books →</a>
+    </div>
+{% endif %}
+{% endblock %}

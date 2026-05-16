@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block title %}Checkout - {{ book.title }}{% endblock %}
+{% block extra_css %}
+<style>
+    body {
+        background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),
+                          url('https://images.unsplash.com/photo-1556742049-0cfed2f4e35d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+    }
+    .payment-container {
+        background: rgba(255, 255, 245, 0.96);
+    }
+    .payment-container {
+        max-width: 550px;
+        margin: 50px auto;
+        background: white;
+        border-radius: 20px;
+        padding: 35px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    .payment-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    .payment-header h2 {
+        font-size: 1.8rem;
+        color: #1a1a1a;
+    }
+    .book-summary {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 12px;
+        text-align: center;
+        margin-bottom: 25px;
+    }
+    .book-summary h3 {
+        margin-bottom: 5px;
+    }
+    .total {
+        font-size: 2rem;
+        color: #e67e22;
+        font-weight: 700;
+        margin: 5px 0;
+    }
+    .payment-methods {
+        margin: 30px 0;
+    }
+    .payment-methods h4 {
+        margin-bottom: 15px;
+    }
+    .payment-methods label {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 12px 0;
+        padding: 12px 15px;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+    .payment-methods label:hover {
+        border-color: #e67e22;
+        background: #fef5ea;
+    }
+    .payment-methods input {
+        width: auto;
+        margin: 0;
+    }
+    .btn-proceed {
+        width: 100%;
+        background: #27ae60;
+        color: white;
+        border: none;
+        padding: 14px;
+        border-radius: 30px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+    .btn-proceed:hover {
+        background: #219a52;
+        transform: translateY(-1px);
+    }
+    .secure-badge {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 0.75rem;
+        color: #888;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="payment-container">
+    <div class="payment-header">
+        <h2>💳 Secure Checkout</h2>
+    </div>
+    
+    <div class="book-summary">
+        <h3>{{ book.title }}</h3>
+        <div class="total">₹{{ "%.0f"|format(book.price) }}</div>
+        <p style="color: #888; font-size: 0.85rem;">One-time purchase • Lifetime access</p>
+    </div>
+    
+    <form method="POST" action="{{ url_for('process_payment') }}">
+        <input type="hidden" name="book_id" value="{{ book.id }}">
+        <div class="payment-methods">
+            <h4>Select payment method:</h4>
+            <label>
+                <input type="radio" name="payment_method" value="card" checked>
+                💳 Credit / Debit Card
+            </label>
+            <label>
+                <input type="radio" name="payment_method" value="upi">
+                📱 UPI (Google Pay, PhonePe, Paytm)
+            </label>
+            <label>
+                <input type="radio" name="payment_method" value="netbanking">
+                🏦 Net Banking
+            </label>
+        </div>
+        <button type="submit" class="btn-proceed">✅ Pay ₹{{ "%.0f"|format(book.price) }}</button>
+    </form>
+    <div class="secure-badge">
+        🔒 Secure payment powered by BookStore • No real charges in demo
+    </div>
+</div>
+{% endblock %}

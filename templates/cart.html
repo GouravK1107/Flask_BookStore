@@ -1,0 +1,245 @@
+{% extends "base.html" %}
+{% block title %}Shopping Cart - BookStore{% endblock %}
+{% block extra_css %}
+<style>
+    .cart-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    .cart-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    .cart-header h1 {
+        font-size: 2rem;
+        color: #1a1a1a;
+    }
+    .cart-table {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .cart-table th {
+        background: #f8f9fa;
+        padding: 15px;
+        text-align: left;
+        font-weight: 600;
+        color: #4a5568;
+    }
+    .cart-table td {
+        padding: 20px 15px;
+        border-bottom: 1px solid #edf2f7;
+        vertical-align: middle;
+    }
+    .cart-product {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    .cart-product img {
+        width: 60px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+    .cart-product h4 {
+        font-size: 1rem;
+        margin-bottom: 5px;
+    }
+    .cart-product p {
+        font-size: 0.75rem;
+        color: #718096;
+    }
+    .quantity-input {
+        width: 70px;
+        padding: 8px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        text-align: center;
+    }
+    .btn-update {
+        background: #e67e22;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 0.7rem;
+        cursor: pointer;
+    }
+    .btn-remove {
+        background: #e74c3c;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 0.7rem;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+    }
+    .cart-summary {
+        background: white;
+        border-radius: 20px;
+        padding: 25px;
+        margin-top: 30px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .cart-summary h3 {
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #e67e22;
+        display: inline-block;
+    }
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+        font-size: 1rem;
+    }
+    .summary-total {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #e67e22;
+        border-top: 1px solid #edf2f7;
+        padding-top: 15px;
+        margin-top: 10px;
+    }
+    .btn-checkout {
+        background: #27ae60;
+        color: white;
+        border: none;
+        padding: 14px 30px;
+        border-radius: 30px;
+        font-size: 1rem;
+        font-weight: 600;
+        width: 100%;
+        margin-top: 20px;
+        cursor: pointer;
+        text-align: center;
+        display: inline-block;
+        text-decoration: none;
+    }
+    .btn-checkout:hover {
+        background: #219a52;
+        transform: translateY(-2px);
+    }
+    .empty-cart {
+        text-align: center;
+        padding: 60px;
+        background: white;
+        border-radius: 20px;
+    }
+    .empty-cart .icon {
+        font-size: 4rem;
+        margin-bottom: 20px;
+    }
+    .btn-shop {
+        background: #e67e22;
+        color: white;
+        padding: 12px 28px;
+        border-radius: 30px;
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 20px;
+    }
+    @media (max-width: 768px) {
+        .cart-table, .cart-table tbody, .cart-table tr, .cart-table td {
+            display: block;
+        }
+        .cart-table thead {
+            display: none;
+        }
+        .cart-table tr {
+            margin-bottom: 15px;
+            border: 1px solid #edf2f7;
+            border-radius: 12px;
+        }
+        .cart-table td {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+        }
+        .cart-table td:before {
+            content: attr(data-label);
+            font-weight: 600;
+            color: #4a5568;
+        }
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="cart-container">
+    <div class="cart-header">
+        <h1>🛒 Shopping Cart</h1>
+        <p>Review your items before checkout</p>
+    </div>
+    
+    {% if cart_items %}
+        <table class="cart-table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart_items %}
+                <tr>
+                    <td data-label="Product">
+                        <div class="cart-product">
+                            <img src="{{ item.book.cover_image }}" alt="{{ item.book.title }}">
+                            <div>
+                                <h4>{{ item.book.title }}</h4>
+                                <p>By {{ item.book.author.username }}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td data-label="Price">₹{{ "%.0f"|format(item.book.price) }}</td>
+                    <td data-label="Quantity">
+                        <form method="POST" action="{{ url_for('update_cart', cart_id=item.id) }}" style="display: flex; gap: 8px; align-items: center;">
+                            <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="99" class="quantity-input">
+                            <button type="submit" class="btn-update">Update</button>
+                        </form>
+                    </td>
+                    <td data-label="Total">₹{{ "%.0f"|format(item.book.price * item.quantity) }}</td>
+                    <td data-label="Actions">
+                        <a href="{{ url_for('remove_from_cart', cart_id=item.id) }}" class="btn-remove" onclick="return confirm('Remove this item?')">Remove</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <div class="cart-summary">
+            <h3>Order Summary</h3>
+            <div class="summary-row">
+                <span>Subtotal ({{ cart_items|length }} items)</span>
+                <span>₹{{ "%.0f"|format(total) }}</span>
+            </div>
+            <div class="summary-row">
+                <span>Shipping</span>
+                <span>FREE</span>
+            </div>
+            <div class="summary-row summary-total">
+                <span>Total</span>
+                <span>₹{{ "%.0f"|format(total) }}</span>
+            </div>
+            <a href="{{ url_for('checkout') }}" class="btn-checkout">Proceed to Checkout →</a>
+        </div>
+    {% else %}
+        <div class="empty-cart">
+            <div class="icon">🛒</div>
+            <h3>Your cart is empty</h3>
+            <p>Looks like you haven't added any books to your cart yet.</p>
+            <a href="{{ url_for('books') }}" class="btn-shop">Browse Books →</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

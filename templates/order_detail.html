@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+{% block title %}Order #{{ order.order_number }} - BookStore{% endblock %}
+{% block extra_css %}
+<style>
+    .order-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    .order-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    .status-badge {
+        display: inline-block;
+        padding: 6px 16px;
+        border-radius: 30px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+    .section-card {
+        background: white;
+        border-radius: 20px;
+        padding: 25px;
+        margin-bottom: 25px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .section-title {
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #e67e22;
+        display: inline-block;
+    }
+    .detail-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+    }
+    .detail-item {
+        margin-bottom: 15px;
+    }
+    .detail-label {
+        font-weight: 600;
+        color: #4a5568;
+        margin-bottom: 5px;
+    }
+    .items-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .items-table th, .items-table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #edf2f7;
+    }
+    .items-table th {
+        background: #f8f9fa;
+        font-weight: 600;
+    }
+    .total-row {
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: #e67e22;
+    }
+    .tracking-timeline {
+        margin-top: 20px;
+    }
+    .timeline-step {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    .timeline-dot {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #e0e0e0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+    }
+    .timeline-dot.completed {
+        background: #27ae60;
+        color: white;
+    }
+    .timeline-dot.current {
+        background: #e67e22;
+        color: white;
+    }
+    .btn-back {
+        background: #e67e22;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 25px;
+        text-decoration: none;
+        display: inline-block;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="order-container">
+    <div class="order-header">
+        <h1>Order Details</h1>
+        <p>Order #{{ order.order_number }}</p>
+        <span class="status-badge status-{{ order.status }}">{{ order.status|upper }}</span>
+    </div>
+    
+    <div class="section-card">
+        <h3 class="section-title">Order Timeline</h3>
+        <div class="tracking-timeline">
+            <div class="timeline-step">
+                <div class="timeline-dot completed">✓</div>
+                <div><strong>Order Placed</strong><br>{{ order.ordered_at.strftime('%B %d, %Y at %I:%M %p') }}</div>
+            </div>
+            <div class="timeline-step">
+                <div class="timeline-dot {% if order.status in ['confirmed', 'shipped', 'delivered'] %}completed{% elif order.status == 'pending' %}current{% endif %}">
+                    {% if order.status in ['confirmed', 'shipped', 'delivered'] %}✓{% else %}2{% endif %}
+                </div>
+                <div><strong>Order Confirmed</strong><br>Your order has been confirmed</div>
+            </div>
+            <div class="timeline-step">
+                <div class="timeline-dot {% if order.status in ['shipped', 'delivered'] %}completed{% elif order.status == 'confirmed' %}current{% endif %}">
+                    {% if order.status in ['shipped', 'delivered'] %}✓{% else %}3{% endif %}
+                </div>
+                <div><strong>Shipped</strong><br>Your order is on the way</div>
+            </div>
+            <div class="timeline-step">
+                <div class="timeline-dot {% if order.status == 'delivered' %}completed{% elif order.status in ['shipped', 'confirmed'] %}current{% endif %}">
+                    {% if order.status == 'delivered' %}✓{% else %}4{% endif %}
+                </div>
+                <div><strong>Delivered</strong><br>Estimated delivery: 3-5 business days</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="section-card">
+        <h3 class="section-title">Items Ordered</h3>
+        <table class="items-table">
+            <thead>
+                <tr><th>Book</th><th>Price</th><th>Quantity</th><th>Total</th></tr>
+            </thead>
+            <tbody>
+                {% for item in order.items %}
+                <tr>
+                    <td>{{ item.book.title }}<br><small>by {{ item.book.author.username }}</small></td>
+                    <td>₹{{ "%.0f"|format(item.price) }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>₹{{ "%.0f"|format(item.price * item.quantity) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr class="total-row">
+                    <td colspan="3" style="text-align: right;">Total</td>
+                    <td>₹{{ "%.0f"|format(order.total_amount) }}</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    
+    <div class="section-card">
+        <h3 class="section-title">Shipping Information</h3>
+        <div class="detail-grid">
+            <div class="detail-item">
+                <div class="detail-label">Shipping Address</div>
+                <div style="white-space: pre-line;">{{ order.shipping_address }}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Payment Method</div>
+                <div>{{ order.payment_method|upper }}</div>
+                <div class="detail-label" style="margin-top: 10px;">Payment Status</div>
+                <div>{% if order.payment_status == 'completed' %}✅ Paid{% else %}⏳ Pending (COD){% endif %}</div>
+            </div>
+        </div>
+    </div>
+    
+    <div style="text-align: center; margin-top: 20px;">
+        <a href="{{ url_for('my_orders') }}" class="btn-back">← Back to My Orders</a>
+        <a href="{{ url_for('books') }}" class="btn-back" style="background: #2c3e50; margin-left: 10px;">📚 Continue Shopping</a>
+    </div>
+</div>
+{% endblock %}

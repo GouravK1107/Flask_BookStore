@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Payment - Order #{{ order.order_number }}{% endblock %}
+{% block extra_css %}
+<style>
+    .payment-container {
+        max-width: 550px;
+        margin: 50px auto;
+        background: white;
+        border-radius: 20px;
+        padding: 35px;
+        text-align: center;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    .payment-methods label {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 12px 0;
+        padding: 12px 15px;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        cursor: pointer;
+    }
+    .btn-proceed {
+        background: #27ae60;
+        color: white;
+        border: none;
+        padding: 14px;
+        border-radius: 30px;
+        font-size: 1rem;
+        font-weight: 600;
+        width: 100%;
+        margin-top: 20px;
+        cursor: pointer;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="payment-container">
+    <h2>💳 Complete Payment</h2>
+    <p>Order #{{ order.order_number }}</p>
+    <div class="total" style="font-size: 2rem; color: #e67e22;">₹{{ "%.0f"|format(order.total_amount) }}</div>
+    
+    <form method="POST" action="{{ url_for('process_order_payment', order_id=order.id) }}">
+        <div class="payment-methods">
+            <h4>Select payment method:</h4>
+            <label><input type="radio" name="payment_method" value="card" checked> 💳 Credit/Debit Card</label>
+            <label><input type="radio" name="payment_method" value="upi"> 📱 UPI (Google Pay, PhonePe)</label>
+            <label><input type="radio" name="payment_method" value="netbanking"> 🏦 Net Banking</label>
+        </div>
+        <button type="submit" class="btn-proceed">✅ Pay ₹{{ "%.0f"|format(order.total_amount) }}</button>
+    </form>
+    <p style="margin-top: 20px; font-size: 0.75rem;">🔒 Demo mode - No real charges</p>
+</div>
+{% endblock %}  

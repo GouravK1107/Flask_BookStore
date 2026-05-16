@@ -1,0 +1,389 @@
+{% extends "base.html" %}
+{% block title %}All Books - BookStore{% endblock %}
+{% block extra_css %}
+<style>
+    body {
+        background-image: url('https://images.unsplash.com/photo-1495446815901-a7297e633e8d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+    }
+    .container {
+        background: rgba(255,254,245,0.9);
+    }
+    .page-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    .page-header h1 {
+        font-size: 2rem;
+        color: #1a1a1a;
+    }
+    .page-header p {
+        color: #4a5568;
+        margin-top: 8px;
+    }
+    
+    .filter-bar {
+        background: white;
+        padding: 20px 25px;
+        border-radius: 16px;
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    
+    .sort-options select {
+        padding: 10px 15px;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        background: white;
+        cursor: pointer;
+    }
+    
+    .search-box {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .search-box input {
+        padding: 10px 15px;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        width: 250px;
+        font-size: 0.9rem;
+    }
+    
+    .search-box button {
+        background: #e67e22;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 10px;
+        color: white;
+        font-weight: 500;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+    .search-box button:hover {
+        background: #d35400;
+    }
+    
+    .section-title {
+        font-size: 1.5rem;
+        margin: 40px 0 20px;
+        color: #1a1a1a;
+        position: relative;
+        padding-bottom: 10px;
+    }
+    
+    .section-title:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 50px;
+        height: 3px;
+        background: #e67e22;
+    }
+    
+    .book-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 25px;
+        margin: 20px 0;
+    }
+    
+    .book-card {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        transition: all 0.2s ease;
+        position: relative;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    
+    .book-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    
+    .book-card img {
+        width: 100%;
+        height: 260px;
+        object-fit: cover;
+        background: #f1f5f9;
+    }
+    
+    .book-info {
+        padding: 12px 12px 15px;
+    }
+    
+    .book-card h3 {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 5px;
+        line-height: 1.4;
+    }
+    
+    .author-name {
+        font-size: 0.75rem;
+        color: #718096;
+        margin-bottom: 8px;
+    }
+    
+    .price {
+        font-weight: 700;
+        color: #e67e22;
+        margin: 8px 0;
+    }
+    
+    .price.free {
+        color: #27ae60;
+    }
+    
+    .btn-details {
+        background: transparent;
+        border: 1px solid #e2e8f0;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        text-decoration: none;
+        color: #4a5568;
+        display: inline-block;
+        transition: 0.2s;
+        margin-top: 5px;
+    }
+    
+    .btn-details:hover {
+        background: #e67e22;
+        border-color: #e67e22;
+        color: white;
+    }
+    
+    .btn-cart {
+        background: #27ae60;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        cursor: pointer;
+        transition: 0.2s;
+        margin-top: 5px;
+        margin-left: 5px;
+    }
+    
+    .btn-cart:hover {
+        background: #219a52;
+        transform: translateY(-1px);
+    }
+    
+    .badge {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        z-index: 1;
+    }
+    
+    .badge-trending { background: #e67e22; color: white; }
+    .badge-popular { background: #27ae60; color: white; }
+    .badge-new { background: #3498db; color: white; }
+    
+    .meta-stats {
+        font-size: 0.7rem;
+        color: #718096;
+        margin: 5px 0;
+    }
+    
+    .button-group {
+        display: flex;
+        gap: 8px;
+        margin-top: 8px;
+        flex-wrap: wrap;
+    }
+    
+    @media (max-width: 768px) {
+        .book-grid {
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 15px;
+        }
+        .book-card img {
+            height: 200px;
+        }
+        .filter-bar {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .search-box {
+            width: 100%;
+        }
+        .search-box input {
+            flex: 1;
+        }
+        .button-group {
+            flex-direction: column;
+        }
+        .btn-cart, .btn-details {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>📚 Discover Books</h1>
+    <p>Explore our collection of amazing books from talented authors</p>
+</div>
+
+<div class="filter-bar">
+    <div class="sort-options">
+        <label>Sort by: </label>
+        <select id="sortSelect" onchange="applyFilters()">
+            <option value="recent" {% if sort_by == 'recent' %}selected{% endif %}>Most Recent</option>
+            <option value="oldest" {% if sort_by == 'oldest' %}selected{% endif %}>Oldest First</option>
+            <option value="popular" {% if sort_by == 'popular' %}selected{% endif %}>Most Popular</option>
+            <option value="trending" {% if sort_by == 'trending' %}selected{% endif %}>Trending</option>
+            <option value="price_low" {% if sort_by == 'price_low' %}selected{% endif %}>Price: Low to High</option>
+            <option value="price_high" {% if sort_by == 'price_high' %}selected{% endif %}>Price: High to Low</option>
+            <option value="most_liked" {% if sort_by == 'most_liked' %}selected{% endif %}>Most Liked</option>
+        </select>
+    </div>
+    
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Search books..." value="{{ search }}">
+        <button onclick="applyFilters()">Search</button>
+    </div>
+</div>
+
+{% if not search and not selected_category and not price_filter %}
+    
+    {% if trending_books %}
+    <h2 class="section-title">🔥 Trending Now</h2>
+    <div class="book-grid">
+        {% for book in trending_books %}
+        <div class="book-card">
+            <div class="badge badge-trending">🔥 Trending</div>
+            <img src="{{ book.cover_image }}" alt="{{ book.title }}">
+            <div class="book-info">
+                <h3>{{ book.title }}</h3>
+                <div class="author-name">{{ book.author.username }}</div>
+                <div class="meta-stats">👁️ {{ book.views }} views | 👍 {{ book.like_count }}</div>
+                <div class="price {% if book.price == 0 %}free{% endif %}">
+                    {% if book.price == 0 %}FREE{% else %}₹{{ "%.0f"|format(book.price) }}{% endif %}
+                </div>
+                <div class="button-group">
+                    <a href="{{ url_for('book_detail', book_id=book.id) }}" class="btn-details">View Details →</a>
+                    <form method="POST" action="{{ url_for('add_to_cart', book_id=book.id) }}" style="display: inline;">
+                        <input type="hidden" name="quantity" value="1">
+                        <button type="submit" class="btn-cart">🛒 Add to Cart</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    {% if popular_books %}
+    <h2 class="section-title">⭐ Most Popular</h2>
+    <div class="book-grid">
+        {% for book in popular_books %}
+        <div class="book-card">
+            <div class="badge badge-popular">⭐ Popular</div>
+            <img src="{{ book.cover_image }}" alt="{{ book.title }}">
+            <div class="book-info">
+                <h3>{{ book.title }}</h3>
+                <div class="author-name">{{ book.author.username }}</div>
+                <div class="meta-stats">👁️ {{ book.views }} views | 👍 {{ book.like_count }}</div>
+                <div class="price {% if book.price == 0 %}free{% endif %}">
+                    {% if book.price == 0 %}FREE{% else %}₹{{ "%.0f"|format(book.price) }}{% endif %}
+                </div>
+                <div class="button-group">
+                    <a href="{{ url_for('book_detail', book_id=book.id) }}" class="btn-details">View Details →</a>
+                    <form method="POST" action="{{ url_for('add_to_cart', book_id=book.id) }}" style="display: inline;">
+                        <input type="hidden" name="quantity" value="1">
+                        <button type="submit" class="btn-cart">🛒 Add to Cart</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    {% if recent_books %}
+    <h2 class="section-title">🆕 New Releases</h2>
+    <div class="book-grid">
+        {% for book in recent_books %}
+        <div class="book-card">
+            <div class="badge badge-new">🆕 New</div>
+            <img src="{{ book.cover_image }}" alt="{{ book.title }}">
+            <div class="book-info">
+                <h3>{{ book.title }}</h3>
+                <div class="author-name">{{ book.author.username }}</div>
+                <div class="price {% if book.price == 0 %}free{% endif %}">
+                    {% if book.price == 0 %}FREE{% else %}₹{{ "%.0f"|format(book.price) }}{% endif %}
+                </div>
+                <div class="button-group">
+                    <a href="{{ url_for('book_detail', book_id=book.id) }}" class="btn-details">View Details →</a>
+                    <form method="POST" action="{{ url_for('add_to_cart', book_id=book.id) }}" style="display: inline;">
+                        <input type="hidden" name="quantity" value="1">
+                        <button type="submit" class="btn-cart">🛒 Add to Cart</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+{% else %}
+    <h2 class="section-title">🔍 Search Results</h2>
+    <div class="book-grid">
+        {% for book in books %}
+        <div class="book-card">
+            <img src="{{ book.cover_image }}" alt="{{ book.title }}">
+            <div class="book-info">
+                <h3>{{ book.title }}</h3>
+                <div class="author-name">{{ book.author.username }}</div>
+                <div class="price {% if book.price == 0 %}free{% endif %}">
+                    {% if book.price == 0 %}FREE{% else %}₹{{ "%.0f"|format(book.price) }}{% endif %}
+                </div>
+                <div class="button-group">
+                    <a href="{{ url_for('book_detail', book_id=book.id) }}" class="btn-details">View Details →</a>
+                    <form method="POST" action="{{ url_for('add_to_cart', book_id=book.id) }}" style="display: inline;">
+                        <input type="hidden" name="quantity" value="1">
+                        <button type="submit" class="btn-cart">🛒 Add to Cart</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <p style="grid-column: 1/-1; text-align: center; padding: 50px; color: #718096;">No books found matching your criteria.</p>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<script>
+    function applyFilters() {
+        const sort = document.getElementById('sortSelect').value;
+        const search = document.getElementById('searchInput').value;
+        window.location.href = "{{ url_for('books') }}?sort=" + sort + "&search=" + encodeURIComponent(search);
+    }
+    
+    document.getElementById('searchInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') applyFilters();
+    });
+</script>
+{% endblock %}

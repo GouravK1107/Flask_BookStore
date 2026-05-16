@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+{% block title %}Checkout - BookStore{% endblock %}
+{% block extra_css %}
+<style>
+    .checkout-container {
+        display: flex;
+        gap: 30px;
+        flex-wrap: wrap;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    .checkout-form {
+        flex: 2;
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .order-summary {
+        flex: 1;
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        height: fit-content;
+        position: sticky;
+        top: 20px;
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-group label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #333;
+    }
+    .form-group input, .form-group textarea, .form-group select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 0.95rem;
+    }
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+    .payment-methods {
+        margin: 20px 0;
+    }
+    .payment-methods label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 10px 0;
+        padding: 12px;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        cursor: pointer;
+    }
+    .btn-place-order {
+        background: #27ae60;
+        color: white;
+        border: none;
+        padding: 14px;
+        border-radius: 30px;
+        font-size: 1rem;
+        font-weight: 600;
+        width: 100%;
+        cursor: pointer;
+    }
+    .summary-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 12px;
+    }
+    .summary-total {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #e67e22;
+        border-top: 1px solid #edf2f7;
+        padding-top: 15px;
+        margin-top: 15px;
+    }
+    .order-items {
+        max-height: 300px;
+        overflow-y: auto;
+        margin-bottom: 20px;
+    }
+    .order-item {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #edf2f7;
+    }
+    .order-item img {
+        width: 50px;
+        height: 65px;
+        object-fit: cover;
+        border-radius: 6px;
+    }
+    .order-item-info {
+        flex: 1;
+    }
+    .order-item-info h4 {
+        font-size: 0.9rem;
+        margin-bottom: 5px;
+    }
+    @media (max-width: 768px) {
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="checkout-container">
+    <div class="checkout-form">
+        <h2>Shipping Information</h2>
+        <form method="POST" action="{{ url_for('place_order') }}">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" name="full_name" value="{{ current_user.username }}" required>
+            </div>
+            <div class="form-group">
+                <label>Address</label>
+                <textarea name="address" rows="3" required placeholder="Street address, apartment, etc."></textarea>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>City</label>
+                    <input type="text" name="city" required>
+                </div>
+                <div class="form-group">
+                    <label>State</label>
+                    <input type="text" name="state" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Pincode</label>
+                    <input type="text" name="pincode" required pattern="[0-9]{6}">
+                </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" name="phone" required pattern="[0-9]{10}">
+                </div>
+            </div>
+            
+            <div class="payment-methods">
+                <h3>Payment Method</h3>
+                <label>
+                    <input type="radio" name="payment_method" value="cod" checked>
+                    💵 Cash on Delivery (Pay when you receive)
+                </label>
+                <label>
+                    <input type="radio" name="payment_method" value="card">
+                    💳 Credit/Debit Card
+                </label>
+                <label>
+                    <input type="radio" name="payment_method" value="upi">
+                    📱 UPI (Google Pay, PhonePe)
+                </label>
+            </div>
+            
+            <button type="submit" class="btn-place-order">Place Order</button>
+        </form>
+    </div>
+    
+    <div class="order-summary">
+        <h3>Order Summary</h3>
+        <div class="order-items">
+            {% for item in cart_items %}
+            <div class="order-item">
+                <img src="{{ item.book.cover_image }}" alt="{{ item.book.title }}">
+                <div class="order-item-info">
+                    <h4>{{ item.book.title }}</h4>
+                    <p>Qty: {{ item.quantity }} × ₹{{ "%.0f"|format(item.book.price) }}</p>
+                </div>
+                <div>₹{{ "%.0f"|format(item.book.price * item.quantity) }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="summary-item">
+            <span>Subtotal</span>
+            <span>₹{{ "%.0f"|format(total) }}</span>
+        </div>
+        <div class="summary-item">
+            <span>Shipping</span>
+            <span>FREE</span>
+        </div>
+        <div class="summary-total">
+            <span>Total</span>
+            <span>₹{{ "%.0f"|format(total) }}</span>
+        </div>
+    </div>
+</div>
+{% endblock %}

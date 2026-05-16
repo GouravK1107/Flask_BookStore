@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% block title %}Edit Book - BookStore{% endblock %}
+{% block extra_css %}
+<style>
+    body {
+        background-image: url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+    }
+    .form-container {
+        background: rgba(255, 255, 245, 0.95);
+    }
+    .form-container {
+        max-width: 800px;
+        margin: 40px auto;
+        background: white;
+        padding: 35px;
+        border-radius: 20px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .form-container h2 {
+        margin-bottom: 10px;
+    }
+    .form-subtitle {
+        color: #666;
+        margin-bottom: 30px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #eee;
+    }
+    .form-group {
+        margin-bottom: 22px;
+    }
+    .form-group label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #333;
+    }
+    .form-group input, .form-group textarea, .form-group select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 0.95rem;
+    }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+        outline: none;
+        border-color: #e67e22;
+        box-shadow: 0 0 0 3px rgba(230,126,34,0.1);
+    }
+    .current-pdf {
+        background: #f8f9fa;
+        padding: 10px 12px;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        margin-top: 5px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .file-info {
+        font-size: 0.75rem;
+        color: #888;
+        margin-top: 6px;
+    }
+    .btn-submit {
+        background: #e67e22;
+        color: white;
+        border: none;
+        padding: 14px 30px;
+        border-radius: 30px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+        width: 100%;
+    }
+    .btn-submit:hover {
+        background: #d35400;
+        transform: translateY(-1px);
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="form-container">
+    <h2>✏️ Edit Book</h2>
+    <div class="form-subtitle">Update your book information</div>
+    
+    <form method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+            <label>Book Title</label>
+            <input type="text" name="title" value="{{ book.title }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Category</label>
+            <select name="category">
+                <option value="Fiction" {% if book.category == 'Fiction' %}selected{% endif %}>Fiction</option>
+                <option value="Non-Fiction" {% if book.category == 'Non-Fiction' %}selected{% endif %}>Non-Fiction</option>
+                <option value="Self-Help" {% if book.category == 'Self-Help' %}selected{% endif %}>Self-Help</option>
+                <option value="Technology" {% if book.category == 'Technology' %}selected{% endif %}>Technology</option>
+                <option value="Science" {% if book.category == 'Science' %}selected{% endif %}>Science</option>
+                <option value="Business" {% if book.category == 'Business' %}selected{% endif %}>Business</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label>Summary</label>
+            <textarea name="summary" rows="4" required>{{ book.summary }}</textarea>
+        </div>
+        
+        <div class="form-group">
+            <label>Current PDF</label>
+            <div class="current-pdf">
+                📄 {{ book.pdf_filename }}
+            </div>
+            <label style="margin-top: 15px;">Replace PDF (optional)</label>
+            <input type="file" name="pdf_file" accept=".pdf">
+            <div class="file-info">Leave empty to keep current PDF</div>
+        </div>
+        
+        <div class="form-group">
+            <label>Price (₹)</label>
+            <input type="number" name="price" step="0.01" value="{{ book.price }}">
+        </div>
+        
+        <div class="form-group">
+            <label>Cover Image URL</label>
+            <input type="text" name="cover_image" value="{{ book.cover_image }}">
+        </div>
+        
+        <button type="submit" class="btn-submit">💾 Save Changes</button>
+    </form>
+</div>
+{% endblock %}

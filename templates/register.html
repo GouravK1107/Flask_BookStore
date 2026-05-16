@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% block title %}Register - BookStore{% endblock %}
+{% block extra_css %}
+<style>
+    body {
+        background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+                    url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+    }
+    .auth-container {
+        max-width: 500px;
+        margin: 50px auto;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(2px);
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .auth-container h2 {
+        text-align: center;
+        margin-bottom: 10px;
+        color: #1a1a1a;
+        font-size: 1.8rem;
+    }
+    .auth-subtitle {
+        text-align: center;
+        color: #4a5568;
+        margin-bottom: 30px;
+        font-size: 0.9rem;
+    }
+    .form-group {
+        margin-bottom: 18px;
+    }
+    .form-group input {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 1rem;
+        transition: 0.2s;
+    }
+    .form-group input:focus {
+        outline: none;
+        border-color: #e67e22;
+        box-shadow: 0 0 0 3px rgba(230,126,34,0.1);
+    }
+    .radio-group {
+        display: flex;
+        gap: 30px;
+        margin: 20px 0;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 12px;
+    }
+    .radio-group label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        font-weight: 500;
+        color: #333;
+    }
+    .radio-group input {
+        width: auto;
+        margin: 0;
+        transform: scale(1.1);
+        cursor: pointer;
+    }
+    .btn-submit {
+        width: 100%;
+        background: #e67e22;
+        color: white;
+        border: none;
+        padding: 14px;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+        margin-top: 10px;
+    }
+    .btn-submit:hover {
+        background: #d35400;
+        transform: translateY(-1px);
+    }
+    .auth-link {
+        text-align: center;
+        margin-top: 20px;
+        color: #4a5568;
+    }
+    .auth-link a {
+        color: #e67e22;
+        text-decoration: none;
+        font-weight: 500;
+    }
+    .role-hint {
+        font-size: 0.75rem;
+        color: #718096;
+        margin-top: 8px;
+        text-align: center;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="auth-container">
+    <h2>Create Account</h2>
+    <div class="auth-subtitle">Join the BookStore community</div>
+    <form method="POST">
+        <div class="form-group">
+            <input type="text" name="username" placeholder="Full name" required autocomplete="off">
+        </div>
+        <div class="form-group">
+            <input type="email" name="email" placeholder="Email address" required autocomplete="off">
+        </div>
+        <div class="form-group">
+            <input type="password" name="password" placeholder="Password" required>
+        </div>
+        <div class="form-group">
+            <input type="password" name="confirm_password" placeholder="Confirm password" required>
+        </div>
+
+        <div class="radio-group">
+            <label>
+                <input type="radio" name="role" value="user" checked> 👤 Reader
+            </label>
+            <label>
+                <input type="radio" name="role" value="author"> ✍️ Author
+            </label>
+        </div>
+        <div class="role-hint">
+            📖 Readers can browse, purchase and read books. ✍️ Authors can also publish their own books.
+        </div>
+
+        <button type="submit" class="btn-submit">Sign Up</button>
+    </form>
+    <p class="auth-link">Already have an account? <a href="{{ url_for('login') }}">Sign in</a></p>
+</div>
+{% endblock %}
