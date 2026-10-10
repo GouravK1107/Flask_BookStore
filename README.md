@@ -4,6 +4,10 @@ A full-featured e-commerce web application for buying and reading books online. 
 
 ## ✨ Features
 
+> 🤝 **Project Type: Freelance**
+>
+> This project was built as part of a freelance engagement for a client. It is shared here with the client's permission to showcase my work, and sensitive details such as credentials, business data, and proprietary information have been removed. If you'd like a similar solution for your business, feel free to get in touch!
+
 ### 👥 User System
 - **Dual Role System**: Users can register as either a **Reader** or **Author**
 - **Authentication**: Secure login/logout with password hashing
